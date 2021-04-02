@@ -8,12 +8,34 @@ class Store {
     this._mutations = options.mutations
     // 保存actions
     this._actions = options.actions
+    // 保存getters
+    this._getters = options.getters
+    
+    // 定义computed选项
+    const computed = {}
+    // 给用户暴露getters
+    this.getters = {}
+    const store = this
+    // this._getters => {doubleCounter(state) {}}
+    Object.keys(this._getters).forEach(key => {
+      // 获取用户定义的getter
+      const fn = store._getters[key]
+      // 转换为computed可以使用的无参数形式
+      computed[key] = function() {
+        return fn(store.state)
+      }
+      // 为getters定义只读属性
+      Object.defineProperty(store.getters, key, {
+        get: () => store._vm[key]
+      })
+    })
     // 响应式操作
     this._vm = new Vue({
       data: {
         // 加上$$，既要对state做响应式，还不做代理
         $$state: options.state,
       },
+      computed
     })
     // 绑定commit和dispatch上下文为store实例
     this.commit = this.commit.bind(this)

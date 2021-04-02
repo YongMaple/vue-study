@@ -5,6 +5,7 @@
 			<router-link to="/about">About</router-link>
 			<p @click="$store.commit('add')">commit:{{ $store.state.counter }}</p>
 			<p @click="$store.dispatch('add')">dispatch:{{ $store.state.counter }}</p>
+			<p>doubleCounter:{{ $store.getters.doubleCounter }}</p>
 		</div>
 		<router-view />
 	</div>
